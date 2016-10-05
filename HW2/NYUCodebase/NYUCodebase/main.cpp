@@ -45,11 +45,17 @@ int main(int argc, char *argv[])
 	#endif
 
 		glViewport(0, 0, 640, 360);
+	
 		float lastFrameTicks = 0.0f;
+		float ticks = (float)SDL_GetTicks() / 1000.0f;
+		//float elasped = ticks - lastFrameTicks;
+		lastFrameTicks = ticks;
+	
 		float x1 = 1.0f;
 		float x2 = 2.0f;
 		float count = 0.0f;
-		ShaderProgram program(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
+		//ShaderProgram program(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
+		ShaderProgram program(RESOURCE_FOLDER"vertex.glsl", RESOURCE_FOLDER"fragment.glsl");
 
 		GLuint p1Txt = LoadTexture("white.png");
 		float p1Y = 0.0f;
@@ -95,7 +101,7 @@ int main(int argc, char *argv[])
 			const Uint8 *keys = SDL_GetKeyboardState(NULL);
 			//player one movement
 			if (keys[SDL_SCANCODE_W]){
-				p1Y += elasped * 2, 0;
+				p1Y += elasped * 2.0;
 			}
 			else if (keys[SDL_SCANCODE_S]){
 				p1Y -= elasped * 2.0;
@@ -103,7 +109,7 @@ int main(int argc, char *argv[])
 
 			//player two movement
 			if (keys[SDL_SCANCODE_UP]){
-				p2Y += elasped * 2, 0;
+				p2Y += elasped * 2.0;
 			}
 			else if (keys[SDL_SCANCODE_DOWN]){
 				p2Y -= elasped * 2.0;
@@ -193,19 +199,19 @@ int main(int argc, char *argv[])
 
 				program.setModelMatrix(modelMatrix);
 
-				glBindTexture(GL_TEXTURE_2D, p1Txt);
+				//glBindTexture(GL_TEXTURE_2D, p1Txt);
 
 				float vertices[] = { -3.45, -0.4f, -3.30, -0.4f, -3.30, 0.4f, -3.45, -0.4f, -3.30, 0.4f, -3.45, 0.4f };
 				glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
 				glEnableVertexAttribArray(program.positionAttribute);
 				float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
-				glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
-				glEnableVertexAttribArray(program.texCoordAttribute);
+				//glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+				//glEnableVertexAttribArray(program.texCoordAttribute);
 
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
 				glDisableVertexAttribArray(program.positionAttribute);
-				glDisableVertexAttribArray(program.texCoordAttribute);
+				//glDisableVertexAttribArray(program.texCoordAttribute);
 			}
 			//Player two
 			if (win != 1){
@@ -214,19 +220,19 @@ int main(int argc, char *argv[])
 
 				program.setModelMatrix(modelMatrix);
 
-				glBindTexture(GL_TEXTURE_2D, p2Txt);
+				//glBindTexture(GL_TEXTURE_2D, p2Txt);
 
-				float vertices2[] = { 3.45f, -0.4f, 3.30f, -0.4f, 3.30f, 0.4f, 3.45f, 0.4f, 3.30f, 0.4f, 3.45f, 0.4f };
+				float vertices2[] = { 3.30f, -0.4f, 3.45f, -0.4f, 3.45f, 0.4f, 3.30f, 0.4f, 3.45f, 0.4f, 3.30f, 0.4f };
 				glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices2);
 				glEnableVertexAttribArray(program.positionAttribute);
 				float texCoords2[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
-				glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords2);
-				glEnableVertexAttribArray(program.texCoordAttribute);
+				//glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords2);
+				//glEnableVertexAttribArray(program.texCoordAttribute);
 
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
 				glDisableVertexAttribArray(program.positionAttribute);
-				glDisableVertexAttribArray(program.texCoordAttribute);
+				//glDisableVertexAttribArray(program.texCoordAttribute);
 			}
 			//Ball
 
@@ -235,19 +241,19 @@ int main(int argc, char *argv[])
 
 			program.setModelMatrix(modelMatrix);
 
-			glBindTexture(GL_TEXTURE_2D, ballTxt);
+			//glBindTexture(GL_TEXTURE_2D, ballTxt);
 
 			float vertices3[] = { -0.07f, -0.07f, 0.07f, -0.07f, 0.07f, 0.07f, -0.07f, -0.07f, 0.07, 0.07f, -0.07, 0.07f };
 			glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices3);
 			glEnableVertexAttribArray(program.positionAttribute);
 			float texCoords3[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
-			glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords3);
-			glEnableVertexAttribArray(program.texCoordAttribute);
+			//glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords3);
+			//glEnableVertexAttribArray(program.texCoordAttribute);
 
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			glDisableVertexAttribArray(program.positionAttribute);
-			glDisableVertexAttribArray(program.texCoordAttribute);
+			//glDisableVertexAttribArray(program.texCoordAttribute);
 
 			SDL_GL_SwapWindow(displayWindow);
 		}
