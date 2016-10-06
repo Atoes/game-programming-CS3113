@@ -31,9 +31,6 @@ GLuint LoadTexture(const char *image_path){
 	return textureID;
 }
 
-//TO WHOMEVER IS READING THIS, FOR SOME REASONS THERE MAY BE A NEED TO BUILD AND RUN MULTIPLE TIMES FOR THE GAME TO START OFF CORRECTLY. SORRY BUT I DON"T KNOW WHY
-//BUT EVERYTIME I EXIT THE VISUAL STUDIO AND THEN TRY AGAIN, IT STARTS OFF WEIRD. TO REPEAT, BUILD AND RUN MULTIPLE TIMES IF THERE IS A PROBLEM.
-
 int main(int argc, char *argv[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -101,18 +98,18 @@ int main(int argc, char *argv[])
 			const Uint8 *keys = SDL_GetKeyboardState(NULL);
 			//player one movement
 			if (keys[SDL_SCANCODE_W]){
-				p1Y += elasped * 2.0;
+					p1Y += elasped * 2.0;
 			}
 			else if (keys[SDL_SCANCODE_S]){
-				p1Y -= elasped * 2.0;
+					p1Y -= elasped * 2.0;
 			}
 
 			//player two movement
 			if (keys[SDL_SCANCODE_UP]){
-				p2Y += elasped * 2.0;
+					p2Y += elasped * 2.0;
 			}
 			else if (keys[SDL_SCANCODE_DOWN]){
-				p2Y -= elasped * 2.0;
+					p2Y -= elasped * 2.0;
 			}
 
 			//ball movement
@@ -122,6 +119,10 @@ int main(int argc, char *argv[])
 			//ball collision with floor and ceiling
 			if (0.07f + bY >= 2.0f || -0.07 + bY <= -2.0f){
 				directionY *= -1.0f;
+				if (directionY == 1.0f)
+					bY += 0.2f;
+				else if (directionY == -1.0f)
+					bY -= 0.2f;
 				//generates a random value which picks out a certain way of changing the angle so that there is variety of movement in game
 				tweak = (rand() % 5);
 				if (tweak == 0){
@@ -144,6 +145,10 @@ int main(int argc, char *argv[])
 			//ball collision with player 1
 			if ((-0.07f + bX <= -3.30f) && (0.07 + bY <= 0.4 + p1Y) && (-0.07 + bY >= -0.4 + p1Y)){
 				directionX *= -1.0f;
+				if (directionX == 1.0f)
+					bX += 0.2f;
+				else if (directionX == -1.0f)
+					bX -= 0.2f;
 				tweak = (rand() % 5);
 				if (tweak == 0){
 					angleMod = 4.0f;
@@ -165,6 +170,10 @@ int main(int argc, char *argv[])
 			//ball collision with player 2
 			if ((0.07f + bX >= 3.30f) && (0.07 + bY <= 0.4 + p2Y) && (-0.07 + bY >= -0.4 + p2Y)){
 				directionX *= -1.0f;
+				if (directionX == 1.0f)
+					bX += 0.2f;
+				else if (directionX == -1.0f)
+					bX -= 0.2f;
 				tweak = (rand() % 5);
 				if (tweak == 0){
 					angleMod = 4.0f;
@@ -222,7 +231,7 @@ int main(int argc, char *argv[])
 
 				//glBindTexture(GL_TEXTURE_2D, p2Txt);
 
-				float vertices2[] = { 3.30f, -0.4f, 3.45f, -0.4f, 3.45f, 0.4f, 3.30f, 0.4f, 3.45f, 0.4f, 3.30f, 0.4f };
+				float vertices2[] = { 3.30f, -0.4f, 3.45f, -0.4f, 3.45f, 0.4f, 3.30f, -0.4f, 3.45f, 0.4f, 3.30f, 0.4f };
 				glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices2);
 				glEnableVertexAttribArray(program.positionAttribute);
 				float texCoords2[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
