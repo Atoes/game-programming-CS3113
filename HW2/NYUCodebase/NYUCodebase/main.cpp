@@ -208,13 +208,13 @@ int main(int argc, char *argv[])
 
 			//win conditions
 			if (0.07 + bX >= 3.45){
-				Mix_PlayChannel(-1, lose, 1);
+				Mix_PlayChannel(-1, lose, 0);
 				win = 1;
 				Mix_FreeChunk(someSound);
 				Mix_FreeMusic(music);
 			}
 			else if (-0.07 + bX < -3.45){
-				Mix_PlayChannel(-1, lose, 1);
+				Mix_PlayChannel(-1, lose, 0);
 				win = 2;
 				Mix_FreeChunk(someSound);
 				Mix_FreeMusic(music);
@@ -290,6 +290,7 @@ int main(int argc, char *argv[])
 		//cleanup
 		Mix_FreeChunk(someSound);
 		Mix_FreeMusic(music);
+		Mix_FreeChunk(lose);
 		SDL_Quit();
 		return 0;
 }
