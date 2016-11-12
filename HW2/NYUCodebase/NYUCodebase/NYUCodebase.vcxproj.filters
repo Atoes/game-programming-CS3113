@@ -69,4 +69,15 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="beep.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="music.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="over.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

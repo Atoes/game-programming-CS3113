@@ -110,6 +110,11 @@
     <Image Include="kid.png" />
     <Image Include="white.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="beep.wav" />
+    <Media Include="music.mp3" />
+    <Media Include="over.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

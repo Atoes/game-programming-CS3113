@@ -92,6 +92,9 @@
     <Image Include="font1.png" />
     <Image Include="sheet.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="music.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "ShaderProgram.h"
 
 #ifdef _WINDOWS
@@ -33,7 +34,7 @@ GLuint LoadTexture(const char *image_path){
 
 int main(int argc, char *argv[])
 {
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO);
 	displayWindow = SDL_CreateWindow("My Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, SDL_WINDOW_OPENGL);
 	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
 	SDL_GL_MakeCurrent(displayWindow, context);
@@ -43,6 +44,17 @@ int main(int argc, char *argv[])
 
 		glViewport(0, 0, 640, 360);
 	
+		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
+		//MUSIC
+		Mix_Music *music;
+		music = Mix_LoadMUS("music.mp3");
+		//Hit sound
+		Mix_Chunk *someSound;
+		someSound = Mix_LoadWAV("beep.wav");
+		//Lose sound
+		Mix_Chunk *lose;
+		lose = Mix_LoadWAV("over.wav");
+
 		float lastFrameTicks = 0.0f;
 		float ticks = (float)SDL_GetTicks() / 1000.0f;
 		//float elasped = ticks - lastFrameTicks;
@@ -74,10 +86,9 @@ int main(int argc, char *argv[])
 		projectionMatrix.setOrthoProjection(-3.55, 3.55, -2.0f, 2.0f, -1.0f, 1.0f);
 
 		glUseProgram(program.programID);
-
+		Mix_PlayMusic(music, -1);
 		SDL_Event event;
 		bool done = false;
-
 		while (!done) {
 			while (SDL_PollEvent(&event)) {
 				if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE) {
@@ -118,6 +129,7 @@ int main(int argc, char *argv[])
 
 			//ball collision with floor and ceiling
 			if (0.07f + bY >= 2.0f || -0.07 + bY <= -2.0f){
+				Mix_PlayChannel(-1, someSound, 0);
 				directionY *= -1.0f;
 				if (directionY == 1.0f)
 					bY += 0.2f;
@@ -144,6 +156,7 @@ int main(int argc, char *argv[])
 
 			//ball collision with player 1
 			if ((-0.07f + bX <= -3.30f) && (0.07 + bY <= 0.4 + p1Y) && (-0.07 + bY >= -0.4 + p1Y)){
+				Mix_PlayChannel(-1, someSound, 0);
 				directionX *= -1.0f;
 				if (directionX == 1.0f)
 					bX += 0.2f;
@@ -169,6 +182,7 @@ int main(int argc, char *argv[])
 
 			//ball collision with player 2
 			if ((0.07f + bX >= 3.30f) && (0.07 + bY <= 0.4 + p2Y) && (-0.07 + bY >= -0.4 + p2Y)){
+				Mix_PlayChannel(-1, someSound, 0);
 				directionX *= -1.0f;
 				if (directionX == 1.0f)
 					bX += 0.2f;
@@ -194,10 +208,16 @@ int main(int argc, char *argv[])
 
 			//win conditions
 			if (0.07 + bX >= 3.45){
+				Mix_PlayChannel(-1, lose, 1);
 				win = 1;
+				Mix_FreeChunk(someSound);
+				Mix_FreeMusic(music);
 			}
 			else if (-0.07 + bX < -3.45){
+				Mix_PlayChannel(-1, lose, 1);
 				win = 2;
+				Mix_FreeChunk(someSound);
+				Mix_FreeMusic(music);
 			}
 
 			//Player one
@@ -267,6 +287,9 @@ int main(int argc, char *argv[])
 			SDL_GL_SwapWindow(displayWindow);
 		}
 
+		//cleanup
+		Mix_FreeChunk(someSound);
+		Mix_FreeMusic(music);
 		SDL_Quit();
 		return 0;
 }
