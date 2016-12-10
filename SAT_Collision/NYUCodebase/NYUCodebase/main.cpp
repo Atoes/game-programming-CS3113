@@ -120,12 +120,11 @@ bool checkSATCollision(const std::vector<Vector> &e1Points, const std::vector<Ve
 class Rectan{
 public:
 	Rectan(){}
-	Rectan(float x, float y, float r, float s1, float s2){
-		xMove = x;
-		yMove = y;
+	Rectan(float r, float s1, float s2){
 		rotation = r;
 		scaleX = s1;
 		scaleY = s2;
+		acceleration = -1.0f;
 	}
 	void setVector(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float x5, float y5, float x6, float y6){
 		points.push_back(Vector(x1, y1, 0));
@@ -137,7 +136,7 @@ public:
 		modified = points;
 	}
 	void Update(float elapsed){
-		rotation += elapsed;
+		xMove += elapsed*acceleration;
 	}
 	void Draw(){
 		program->setModelMatrix(this->modelMatrix);
@@ -145,22 +144,22 @@ public:
 		this->modelMatrix.identity();
 
 		this->modelMatrix.Translate(xMove, yMove, 0.0f);
-		//this->modelMatrix.Rotate(rotation);
+		this->modelMatrix.Rotate(rotation);
 		this->modelMatrix.Scale(scaleX, scaleY, 1.0f);
 
+
 		for (int i = 0; i < modified.size(); i++){
-			modified.at(i).x *= scaleX;
-			modified.at(i).y *= scaleY;
-			modified.at(i).x += xMove;
-			modified.at(i).y += yMove;
-			//modified.at(i).x = modified.at(i).x*cos(rotation) - modified.at(i).y*sin(rotation);
-			//modified.at(i).y = modified.at(i).x*sin(rotation) + modified.at(i).y*cos(rotation);
+			float xPos = points.at(i).x*cos(rotation) - points.at(i).y*sin(rotation);
+			float yPos = points.at(i).x*sin(rotation) + points.at(i).y*cos(rotation);
+			xPos *= scaleX;
+			yPos *= scaleY;
+			xPos = xMove + xPos;
+			yPos = yMove + yPos;
+			modified.at(i).x = xPos;
+			modified.at(i).y = yPos;
 		}
 
 		glUseProgram(program->programID);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		float vertices[] = { points.at(0).x, points.at(0).y, points.at(1).x, points.at(1).y, points.at(2).x, points.at(2).y, 
 			points.at(3).x, points.at(3).y, points.at(4).x, points.at(4).y, points.at(5).x, points.at(5).y};
@@ -177,6 +176,7 @@ public:
 	float rotation;
 	float scaleX;
 	float scaleY;
+	float acceleration;
 	std::vector<Vector> points;
 	std::vector<Vector> modified;
 };
@@ -200,9 +200,6 @@ void Update(float elapsed, Rectan& one, Rectan& two, Rectan& three){
 	//collision(one, two);
 	//collision(one, three);
 	//collision(two, three);
-	if (checkSATCollision(one.modified, two.modified)){
-		two.xMove += elapsed;
-	}
 	one.Update(elapsed);
 	two.Update(elapsed);
 	three.Update(elapsed);
@@ -226,15 +223,19 @@ int main(int argc, char *argv[])
 	Matrix modelMatrix;
 	Matrix viewMatrix;
 
-	Rectan one(0, 0, 3.14*45/180, 2.0f, 2.0f);
+	Rectan one(3.14*45/180, 2.0f, 2.0f);
 	one.setVector(-0.07f, -0.07f, 0.07f, -0.07f, 0.07f, 0.07f, -0.07f, -0.07f, 0.07, 0.07f, -0.07, 0.07f);
-	Rectan two(1, 0.5, 3.14 * 135 / 180, 3.0f, 3.0f);
+	one.xMove = 0.0f;
+	one.yMove = 0.5f;
+	one.acceleration = 1.0f;
+	Rectan two(3.14 * 135 / 180, 3.0f, 3.0f);
 	two.setVector(-0.07f, -0.07f, 0.07f, -0.07f, 0.07f, 0.07f, -0.07f, -0.07f, 0.07, 0.07f, -0.07, 0.07f);
-	Rectan three(3, 1, 0.0f, 5.0f, 5.0f);
+	two.xMove = 1.0f;
+	two.yMove = 0.5f;
+	Rectan three(0.0f, 5.0f, 5.0f);
 	three.setVector(-0.07f, -0.07f, 0.07f, -0.07f, 0.07f, 0.07f, -0.07f, -0.07f, 0.07, 0.07f, -0.07, 0.07f);
-
-	Rectan four(0, 0, 0, 1.0f, 1.0f);
-	four.setVector(-0.07f, -0.07f, 0.07f, -0.07f, 0.07f, 0.07f, -0.07f, -0.07f, 0.07, 0.07f, -0.07, 0.07f);
+	three.xMove = 3.0f;
+	three.yMove = 1.0f;
 
 	projectionMatrix.setOrthoProjection(-3.55, 3.55, -2.0f, 2.0f, -1.0f, 1.0f);
 
@@ -290,13 +291,22 @@ int main(int argc, char *argv[])
 		two.Update(FIXED_TIMESTEP);
 		three.Update(FIXED_TIMESTEP);
 
-		collision(one, two);
-		collision(two, three);
-		collision(one, three);
-
 		one.Draw();
 		two.Draw();
 		three.Draw();
+
+		if (checkSATCollision(one.modified, two.modified)){
+			one.acceleration *= -1.0f;
+			two.acceleration *= -1.0f;
+		}
+		if (checkSATCollision(one.modified, three.modified)){
+			one.acceleration *= -1.0f;
+			three.acceleration *= -1.0f;
+		}
+		if (checkSATCollision(two.modified, three.modified)){
+			two.acceleration *= -1.0f;
+			three.acceleration *= -1.0f;
+		}
 
 		SDL_GL_SwapWindow(displayWindow);
 	}
