@@ -136,6 +136,7 @@ public:
 		modified = points;
 	}
 	void Update(float elapsed){
+		rotation += elapsed * 2.0f;
 		xMove += elapsed*acceleration;
 	}
 	void Draw(){
@@ -197,9 +198,6 @@ void collision(Rectan& one, Rectan &two){
 }
 
 void Update(float elapsed, Rectan& one, Rectan& two, Rectan& three){
-	//collision(one, two);
-	//collision(one, three);
-	//collision(two, three);
 	one.Update(elapsed);
 	two.Update(elapsed);
 	three.Update(elapsed);
